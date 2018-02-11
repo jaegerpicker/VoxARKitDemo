@@ -45,7 +45,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         boxNode.physicsBody = SCNPhysicsBody(type: .dynamic, shape: SCNPhysicsShape(node: boxNode, options: nil))
         boxNode.physicsBody?.isAffectedByGravity = false
         boxNode.opacity = 0.01
-        modelClone.rotation = SCNVector4Make(1, 0, 0, (Float(.pi/2 * 3)))
+        modelClone.rotation = SCNVector4Make(1, 0, 0, (Float(Double.pi/2 * 3)))
         sceneView.scene.rootNode.addChildNode(modelClone)
         sceneView.scene.rootNode.addChildNode(boxNode)
     }
