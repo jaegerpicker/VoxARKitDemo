@@ -10,44 +10,59 @@ import UIKit
 import SceneKit
 import ARKit
 
-class ViewController: UIViewController, ARSCNViewDelegate {
+class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 
+    @IBOutlet weak var sessionInfoView: UIView!
+    @IBOutlet weak var sessionInfoLabel: UILabel!
     @IBOutlet var sceneView: ARSCNView!
-    let nodeName = "phone"
+    let nodeName = "mbp15_2016_body_Body15_silver"
     var nodeModel:SCNNode!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let configuration = ARWorldTrackingConfiguration()
+        
+        configuration.planeDetection = [.horizontal, .vertical]
+        sceneView.session.run(configuration)
         
         // Set the view's delegate
         sceneView.delegate = self
+        sceneView.session.delegate = self
         
         // Show statistics such as fps and timing information
         sceneView.showsStatistics = true
         sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints, ARSCNDebugOptions.showWorldOrigin]
         sceneView.antialiasingMode = .multisampling4X
         
-        let scene = SCNScene()
+        
         
         // Set the scene to the view
+        //guard let currentTransform = sceneView.session.currentFrame?.camera.transform else { return }
+        //var translation = matrix_identity_float4x4
         
+        //Change The X Value
+        //translation.columns.3.x = 0
+        
+        //Change The Y Value
+        //translation.columns.3.y = 0
+        
+        //Change The Z Value
+        //translation.columns.3.z = 1
         
         let modelScene = SCNScene(named:
-            "art.scnassets/iPhone 6.scn")!
-        sceneView.scene = scene
+           "art.scnassets/MacBook_Pro15_Touch_2016.scn")!
+        //sceneView.scene = modelScene
         self.nodeModel =  modelScene.rootNode.childNode(
             withName: nodeName, recursively: true)
-        self.nodeModel.boundingBox = (min: SCNVector3(x: -1, y:-1, z:-1), max: SCNVector3(x: 0, y: 0, z: 0))
-        let modelClone = self.nodeModel.clone()
-        let headBox = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.01)
-        let boxNode = SCNNode(geometry: headBox)
-        boxNode.position = modelClone.position
-        boxNode.physicsBody = SCNPhysicsBody(type: .dynamic, shape: SCNPhysicsShape(node: boxNode, options: nil))
-        boxNode.physicsBody?.isAffectedByGravity = false
-        boxNode.opacity = 0.01
-        modelClone.rotation = SCNVector4Make(1, 0, 0, (Float(Double.pi/2 * 3)))
-        sceneView.scene.rootNode.addChildNode(modelClone)
-        sceneView.scene.rootNode.addChildNode(boxNode)
+        self.nodeModel.boundingBox = (min: SCNVector3(x: -2, y:-2, z:-2), max: SCNVector3(x: 0, y: 0, z: 0))
+        //let modelClone = self.nodeModel.clone()
+        self.nodeModel.rotation = SCNVector4Make(1, 0, 0, (Float(Double.pi/2 * 3)))
+        let action = SCNAction.scale(by: 0.33, duration: 1.0)
+        self.nodeModel.runAction(action)
+        //self.nodeModel.simdTransform = matrix_multiply(currentTransform, translation)
+        //sceneView.scene.rootNode.addChildNode(self.nodeModel)
+        //addBox()
+        UIApplication.shared.isIdleTimerDisabled = true
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -55,7 +70,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // Create a session configuration
         let configuration = ARWorldTrackingConfiguration()
-
+        configuration.planeDetection = [.horizontal, .vertical]
         // Run the view's session
         sceneView.session.run(configuration)
     }
@@ -87,15 +102,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        if !anchor.isKind(of: ARPlaneAnchor.self) {
-            DispatchQueue.main.async {
-                //let modelClone = self.nodeModel.clone()
-                //modelClone.position = SCNVector3Zero
-                
-                // Add model as a child of the node
-                //node.addChildNode(modelClone)
-            }
-        }
+        guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
+        let plane = Plane(anchor: planeAnchor, in: sceneView)
+        let modelClone = self.nodeModel.clone()
+        plane.addChildNode(modelClone)
+        node.addChildNode(plane)
     }
     
     func getParent(_ nodeFound: SCNNode?) -> SCNNode? {
@@ -125,18 +136,96 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
 */
     
-    func session(_ session: ARSession, didFailWithError error: Error) {
-        // Present an error message to the user
-        
+    // MARK: - ARSessionDelegate
+    
+    func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
+        guard let frame = session.currentFrame else { return }
+        updateSessionInfoLabel(for: frame, trackingState: frame.camera.trackingState)
     }
     
+    func session(_ session: ARSession, didRemove anchors: [ARAnchor]) {
+        guard let frame = session.currentFrame else { return }
+        updateSessionInfoLabel(for: frame, trackingState: frame.camera.trackingState)
+    }
+    
+    func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) {
+        updateSessionInfoLabel(for: session.currentFrame!, trackingState: camera.trackingState)
+    }
+    
+    // MARK: - ARSessionObserver
+    
     func sessionWasInterrupted(_ session: ARSession) {
-        // Inform the user that the session has been interrupted, for example, by presenting an overlay
-        
+        // Inform the user that the session has been interrupted, for example, by presenting an overlay.
+        sessionInfoLabel.text = "Session was interrupted"
     }
     
     func sessionInterruptionEnded(_ session: ARSession) {
-        // Reset tracking and/or remove existing anchors if consistent tracking is required
+        // Reset tracking and/or remove existing anchors if consistent tracking is required.
+        sessionInfoLabel.text = "Session interruption ended"
+        resetTracking()
+    }
+    
+    func session(_ session: ARSession, didFailWithError error: Error) {
+        // Present an error message to the user.
+        sessionInfoLabel.text = "Session failed: \(error.localizedDescription)"
+        resetTracking()
+    }
+    
+    // MARK: - Private methods
+    
+    private func updateSessionInfoLabel(for frame: ARFrame, trackingState: ARCamera.TrackingState) {
+        // Update the UI to provide feedback on the state of the AR experience.
+        let message: String
         
+        switch trackingState {
+        case .normal where frame.anchors.isEmpty:
+            // No planes detected; provide instructions for this app's AR interactions.
+            message = "Move the device around to detect horizontal and vertical surfaces."
+            
+        case .notAvailable:
+            message = "Tracking unavailable."
+            
+        case .limited(.excessiveMotion):
+            message = "Tracking limited - Move the device more slowly."
+            
+        case .limited(.insufficientFeatures):
+            message = "Tracking limited - Point the device at an area with visible surface detail, or improve lighting conditions."
+            
+        case .limited(.initializing):
+            message = "Initializing AR session."
+            
+        default:
+            // No feedback needed when tracking is normal and planes are visible.
+            // (Nor when in unreachable limited-tracking states.)
+            message = ""
+            
+        }
+        
+        sessionInfoLabel.text = message
+        sessionInfoView.isHidden = message.isEmpty
+    }
+    
+    private func resetTracking() {
+        let configuration = ARWorldTrackingConfiguration()
+        configuration.planeDetection = [.horizontal, .vertical]
+        sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
+    }
+    
+    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+        guard let planeAnchor = anchor as? ARPlaneAnchor,
+            let plane = node.childNodes.first as? Plane
+            else { return }
+        
+        // Update ARSCNPlaneGeometry to the anchor's new estimated shape.
+        if let planeGeometry = plane.meshNode.geometry as? ARSCNPlaneGeometry {
+            planeGeometry.update(from: planeAnchor.geometry)
+        }
+        
+        // Update extent visualization to the anchor's new bounding rectangle.
+        if let extentGeometry = plane.extentNode.geometry as? SCNPlane {
+            extentGeometry.width = CGFloat(planeAnchor.extent.x)
+            extentGeometry.height = CGFloat(planeAnchor.extent.z)
+            plane.extentNode.simdPosition = planeAnchor.center
+        }
     }
 }

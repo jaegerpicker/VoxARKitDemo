@@ -1,23 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.16" systemVersion="17A278a" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.12"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
         <scene sceneID="tXr-a1-R10">
             <objects>
-                <viewController id="BV1-FR-VrT" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
-                    <arscnView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="BrB-h1-WRS">
+                <viewController id="BV1-FR-VrT" customClass="ViewController" customModule="VoxARKitDemo" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="ALQ-By-qBU">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    </arscnView>
+                        <subviews>
+                            <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" restorationIdentifier="Scene View" sceneName="Scene View" translatesAutoresizingMaskIntoConstraints="NO" id="OgV-5h-AwD" userLabel="Scene View">
+                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                            </arscnView>
+                            <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gLb-RE-b2B">
+                                <rect key="frame" x="16" y="623" width="240" height="24"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="EQ1-gK-FpK">
+                                    <rect key="frame" x="0.0" y="0.0" width="240" height="24"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Loading AR Session..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L8E-gf-Pe4">
+                                            <rect key="frame" x="8" y="2" width="224" height="21"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="L8E-gf-Pe4" firstAttribute="leading" secondItem="EQ1-gK-FpK" secondAttribute="leading" constant="8" id="C8p-4s-kb9"/>
+                                        <constraint firstAttribute="bottom" secondItem="L8E-gf-Pe4" secondAttribute="bottom" constant="1" id="Xry-et-Jsk"/>
+                                        <constraint firstItem="L8E-gf-Pe4" firstAttribute="top" secondItem="EQ1-gK-FpK" secondAttribute="top" constant="2" id="aXD-Pc-pEV"/>
+                                        <constraint firstAttribute="trailing" secondItem="L8E-gf-Pe4" secondAttribute="trailing" constant="8" id="ogc-fH-0Bz"/>
+                                    </constraints>
+                                </view>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="240" id="dbg-V8-7vJ"/>
+                                </constraints>
+                                <blurEffect style="light"/>
+                            </visualEffectView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="0L2-GA-RhM" firstAttribute="trailing" secondItem="OgV-5h-AwD" secondAttribute="trailing" id="3Uw-z4-N6l"/>
+                            <constraint firstAttribute="bottom" secondItem="gLb-RE-b2B" secondAttribute="bottom" constant="20" symbolic="YES" id="8Og-BR-wIe"/>
+                            <constraint firstItem="0L2-GA-RhM" firstAttribute="trailing" secondItem="gLb-RE-b2B" secondAttribute="trailing" constant="119" id="A55-F2-M4M"/>
+                            <constraint firstItem="OgV-5h-AwD" firstAttribute="leading" secondItem="0L2-GA-RhM" secondAttribute="leading" id="Db3-y9-3aO"/>
+                            <constraint firstItem="OgV-5h-AwD" firstAttribute="top" secondItem="0L2-GA-RhM" secondAttribute="top" id="S7H-Lg-gHf"/>
+                            <constraint firstItem="gLb-RE-b2B" firstAttribute="leading" secondItem="0L2-GA-RhM" secondAttribute="leading" constant="16" id="mSH-J6-tTh"/>
+                            <constraint firstItem="0L2-GA-RhM" firstAttribute="bottom" secondItem="OgV-5h-AwD" secondAttribute="bottom" id="yeX-qG-uW0"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="0L2-GA-RhM"/>
+                    </view>
                     <connections>
-                        <outlet property="sceneView" destination="BrB-h1-WRS" id="5nT-qQ-ynl"/>
+                        <outlet property="sceneView" destination="OgV-5h-AwD" id="Cyb-KB-fVl"/>
+                        <outlet property="sessionInfoLabel" destination="L8E-gf-Pe4" id="eaI-Ms-tW6"/>
+                        <outlet property="sessionInfoView" destination="EQ1-gK-FpK" id="K1s-dt-QaZ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>

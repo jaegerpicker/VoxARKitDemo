@@ -15,6 +15,7 @@
 		473422F720309D610002F9B3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 473422F520309D610002F9B3 /* LaunchScreen.storyboard */; };
 		4734230220309D620002F9B3 /* VoxARKitDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4734230120309D620002F9B3 /* VoxARKitDemoTests.swift */; };
 		4734230D20309D620002F9B3 /* VoxARKitDemoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4734230C20309D620002F9B3 /* VoxARKitDemoUITests.swift */; };
+		47AF40FA211243790070A089 /* Plane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47AF40F9211243790070A089 /* Plane.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,7 @@
 		4734230820309D620002F9B3 /* VoxARKitDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VoxARKitDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4734230C20309D620002F9B3 /* VoxARKitDemoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoxARKitDemoUITests.swift; sourceTree = "<group>"; };
 		4734230E20309D620002F9B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		47AF40F9211243790070A089 /* Plane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Plane.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +104,7 @@
 				473422EA20309D610002F9B3 /* AppDelegate.swift */,
 				473422EC20309D610002F9B3 /* art.scnassets */,
 				473422EE20309D610002F9B3 /* ViewController.swift */,
+				47AF40F9211243790070A089 /* Plane.swift */,
 				473422F020309D610002F9B3 /* Main.storyboard */,
 				473422F320309D610002F9B3 /* Assets.xcassets */,
 				473422F520309D610002F9B3 /* LaunchScreen.storyboard */,
@@ -265,6 +268,7 @@
 			files = (
 				473422EF20309D610002F9B3 /* ViewController.swift in Sources */,
 				473422EB20309D610002F9B3 /* AppDelegate.swift in Sources */,
+				47AF40FA211243790070A089 /* Plane.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -433,6 +437,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = VHWFV2V25Z;
 				INFOPLIST_FILE = VoxARKitDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.teamawesomemcpants.VoxARKitDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -448,6 +453,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = VHWFV2V25Z;
 				INFOPLIST_FILE = VoxARKitDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.teamawesomemcpants.VoxARKitDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
