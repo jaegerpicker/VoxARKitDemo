@@ -9,7 +9,7 @@ import ARKit
 
 // Convenience extension for colors defined in asset catalog.
 extension UIColor {
-    static let planeColor = UIColor.blue
+    static let planeColor = UIColor.clear
 }
 
 class Plane: SCNNode {

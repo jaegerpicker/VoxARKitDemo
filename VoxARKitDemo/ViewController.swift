@@ -15,8 +15,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet weak var sessionInfoView: UIView!
     @IBOutlet weak var sessionInfoLabel: UILabel!
     @IBOutlet var sceneView: ARSCNView!
-    let nodeName = "mbp15_2016_body_Body15_silver"
+    let nodeName = "MacBook"
     var nodeModel:SCNNode!
+    var planeFound = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,13 +51,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         //translation.columns.3.z = 1
         
         let modelScene = SCNScene(named:
-           "art.scnassets/MacBook_Pro15_Touch_2016.scn")!
+           "art.scnassets/macbookpro2017.dae")!
         //sceneView.scene = modelScene
         self.nodeModel =  modelScene.rootNode.childNode(
             withName: nodeName, recursively: true)
         self.nodeModel.boundingBox = (min: SCNVector3(x: -2, y:-2, z:-2), max: SCNVector3(x: 0, y: 0, z: 0))
         //let modelClone = self.nodeModel.clone()
-        self.nodeModel.rotation = SCNVector4Make(1, 0, 0, (Float(Double.pi/2 * 3)))
+        //self.nodeModel.rotation = SCNVector4Make(1, 0, 0, (Float(Double.pi/2 * 3)))
         let action = SCNAction.scale(by: 0.33, duration: 1.0)
         self.nodeModel.runAction(action)
         //self.nodeModel.simdTransform = matrix_multiply(currentTransform, translation)
@@ -80,6 +81,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         // Pause the view's session
         sceneView.session.pause()
+        planeFound = false
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -105,8 +107,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
         let plane = Plane(anchor: planeAnchor, in: sceneView)
         let modelClone = self.nodeModel.clone()
-        plane.addChildNode(modelClone)
+        modelClone.position = SCNVector3Zero
+        let pov = sceneView.pointOfView
+        let position = pov?.position
+        modelClone.position.x = (position?.x)! * 0.75
+        modelClone.position.y = (position?.y)! * 0.75
+        modelClone.position.z = (position?.z)! * 0.75
+        node.addChildNode(modelClone)
         node.addChildNode(plane)
+        planeFound = true
     }
     
     func getParent(_ nodeFound: SCNNode?) -> SCNNode? {
