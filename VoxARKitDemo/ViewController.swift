@@ -38,31 +38,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         
         // Set the scene to the view
-        //guard let currentTransform = sceneView.session.currentFrame?.camera.transform else { return }
-        //var translation = matrix_identity_float4x4
-        
-        //Change The X Value
-        //translation.columns.3.x = 0
-        
-        //Change The Y Value
-        //translation.columns.3.y = 0
-        
-        //Change The Z Value
-        //translation.columns.3.z = 1
-        
         let modelScene = SCNScene(named:
            "art.scnassets/macbookpro2017.dae")!
-        //sceneView.scene = modelScene
+        // Get the root node as the nodeModel (grabbing the macbook model itself)
         self.nodeModel =  modelScene.rootNode.childNode(
             withName: nodeName, recursively: true)
         self.nodeModel.boundingBox = (min: SCNVector3(x: -2, y:-2, z:-2), max: SCNVector3(x: 0, y: 0, z: 0))
-        //let modelClone = self.nodeModel.clone()
-        //self.nodeModel.rotation = SCNVector4Make(1, 0, 0, (Float(Double.pi/2 * 3)))
         let action = SCNAction.scale(by: 0.33, duration: 1.0)
+        // Scale the model down by 1/3 to fit the view area better
         self.nodeModel.runAction(action)
-        //self.nodeModel.simdTransform = matrix_multiply(currentTransform, translation)
-        //sceneView.scene.rootNode.addChildNode(self.nodeModel)
-        //addBox()
         UIApplication.shared.isIdleTimerDisabled = true
     }
     
@@ -85,11 +69,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        // Grab the location of the first touch event
         let location = touches.first!.location(in: sceneView)
         var hitTestOptions = [SCNHitTestOption: Any]()
+        // Constrain the hit test to the bounding box of the model
         hitTestOptions[SCNHitTestOption.boundingBoxOnly] = true
         let hitResults: [SCNHitTestResult]  =
             sceneView.hitTest(location, options: hitTestOptions)
+        // Check to see if the node that is hit is the parent node at the root
+        // if it is the parent node, meaning the user is trying to remove the model
+        // from view, remove it from the scene
         if let hit = hitResults.first {
             if let node = getParent(hit.node) {
                 node.removeFromParentNode()
@@ -98,27 +87,39 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
         let hitResultsFeaturePoints: [ARHitTestResult] =
             sceneView.hitTest(location, types: .featurePoint)
+        // Add an anchor to the scene to allow the user to move around the model in AR space
         if let hit = hitResultsFeaturePoints.first {
             sceneView.session.add(anchor: ARAnchor(transform: hit.worldTransform))
         }
     }
     
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        // Get the Anchor of the plane found in the scene
         guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
+        // Get the plane itself
         let plane = Plane(anchor: planeAnchor, in: sceneView)
+        // make a copy of the model - making a copy in order to apply 
+        // positioning and transforms to it but not affect the original
+        // model. This allows us to apply the model fresh to any plane.
         let modelClone = self.nodeModel.clone()
+        // root of the plane
         modelClone.position = SCNVector3Zero
         let pov = sceneView.pointOfView
         let position = pov?.position
+        // Position the model in a good default for viewing
         modelClone.position.x = (position?.x)! * 0.75
         modelClone.position.y = (position?.y)! * 0.75
         modelClone.position.z = (position?.z)! * 0.75
+        // Add the model to the node and the plane also
         node.addChildNode(modelClone)
         node.addChildNode(plane)
         planeFound = true
     }
     
     func getParent(_ nodeFound: SCNNode?) -> SCNNode? {
+        // Recusive method to check if the node is the parent node, if not walk up the
+        // node tree to find the parent or return nil if it's not attached to the main
+        // model
         if let node = nodeFound {
             if node.name == nodeName {
                 return node
@@ -133,17 +134,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         super.didReceiveMemoryWarning()
         // Release any cached data, images, etc that aren't in use.
     }
-
-    // MARK: - ARSCNViewDelegate
-    
-/*
-    // Override to create and configure nodes for anchors added to the view's session.
-    func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
-        let node = SCNNode()
-     
-        return node
-    }
-*/
     
     // MARK: - ARSessionDelegate
     
